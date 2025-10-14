@@ -1,0 +1,106 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+
+typedef struct student{
+        char SID[20];
+        char name[30];
+        char branch[25];
+        char semester[10];
+        char address[25];}stu;
+
+stu st;
+
+void insert_new(){
+        printf("\n Enter SID :");
+        scanf("%s",st.SID);
+        printf("\n Enter name:");
+        scanf("%s",st.name);
+        printf("\n Enter branch name :");
+        scanf("%s",st.branch);
+        printf("\n Enter semester:");
+        scanf("%s",st.semester);
+        printf("\n Enter address:");getchar();
+        fgets(st.address,sizeof(st.address),stdin);
+        st.address[strcmp(st.address,"\n")]='\0';
+        FILE *fp;
+        fp=fopen("student_info.txt","a");
+        if(fp==NULL){
+                printf("Error cant open the file now!\n");
+                return;}
+        fprintf(fp,"%s\t%s\t%s\t%s\t%s\n",st.SID,st.name,st.branch,st.semester,st.address);
+        fclose(fp);
+        printf("\n The student data has been added to the file\n");
+}
+
+void modify_add(){
+        char new_ID[20];
+        int flag=0;
+        printf("\n Enter the id of student whose address to be modified:");
+        scanf("%s",new_ID);
+        FILE *fp=fopen("student_info.txt","r");
+        if(fp==NULL){
+                  printf("Error cant open the file now!\n");
+                return;}
+       FILE *fp1=fopen("sample.txt","a");
+       if(fp1==NULL){printf("Error cant open the file now!\n");
+                return;}
+       while(fscanf(fp,"%s%s%s%s%s",st.SID,st.name,st.branch,st.semester,st.address)!=EOF){
+              if(strcmp(st.SID,new_ID)==0){
+                      printf("Enter the new address of the student:");
+                      scanf("%s",st.address);
+                      flag=1;
+              }
+              fprintf(fp1,"%s\t%s\t%s\t%s\t%s\n",st.SID,st.name,st.branch,st.semester,st.address);}
+       if(flag==1)
+               printf("The address is successfully modified\n");
+       else
+               printf("\n The student with the given statement ID do not exist");
+       fclose(fp);
+       fclose(fp1);
+       remove("student_info.txt");
+       rename("sample.txt","student_info.txt");
+}
+      void delete_st(){
+              char new_ID[20];
+              int flag=0;
+              printf("\n Enter the student id whose entry in the file has to be deleted\n");
+              scanf("%s",new_ID);
+              FILE *fp=fopen("student_info.txt","r");
+              if(fp==NULL){
+                      printf("Error opening file\n");
+                      return;}
+              FILE *fp1=fopen("sample.txt","a");
+       if(fp1==NULL){printf("Error cant open the file now!\n");
+                return;}
+         while(fscanf(fp,"%s%s%s%s%s",st.SID,st.name,st.branch,st.semester,st.address)!=EOF){
+              if(strcmp(st.SID,new_ID)!=0){
+                      fprintf(fp1,"%s\t%s\t%s\t%s\t%s\n",st.SID,st.name,st.branch,st.semester,st.address);
+     }else
+             flag=1;
+         }
+         if(flag==1)
+                 printf("\n The student with given ID is deleted \n");
+         else
+                 printf("\n The given student do not exist\n");
+         fclose(fp);
+         fclose(fp1);
+         remove("student_info.txt");
+         rename("sample.txt","student_info.txt");
+      }
+void list_all(){
+        int flag=0;
+          FILE *fp=fopen("student_info.txt","r");
+              if(fp==NULL){
+                      printf("Error opening file\n");
+                      return;}
+        printf("The list of all the students:\n");
+        while(fscanf(fp,"%s%s%s%s%s",st.SID,st.name,st.branch,st.semester,st.address)!=EOF){
+                printf("Student ID:%s \n",st.SID);
+                 printf("Student name:%s \n",st.name);
+                  printf("Student branch:%s \n",st.branch);
+                   printf("Student ID:%s \n",st.semester);
+                  printf("Student address:%s \n",st.address);printf("..\n");
+                  flag=1;}
+        if(!flag) printf("\n There is no student present in the given file!!\n");
+        fclose(fp);
